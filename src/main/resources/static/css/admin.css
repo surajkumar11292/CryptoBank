@@ -1,0 +1,36 @@
+/* ============================================================
+   CryptoBank — Admin console
+   Reuses bank.css tokens/components; adds only what's admin-specific.
+   ============================================================ */
+
+.admin-shell { min-height: 100vh; background: var(--bg); }
+
+.admin-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 28px; background: var(--surface); border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 20; box-shadow: var(--shadow);
+}
+.admin-header .sidebar__brand { padding: 0; }
+.admin-header .sidebar__brand-name,
+.admin-header .sidebar__brand-sub { color: var(--text); }
+.admin-header .sidebar__brand-sub { color: var(--text-dim); }
+.admin-header__right { display: flex; align-items: center; gap: 12px; }
+
+.admin-main { max-width: 1080px; margin: 0 auto; padding: 28px 24px 60px; display: flex; flex-direction: column; gap: 22px; }
+
+.admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+.admin-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); }
+.admin-stat__label { font-size: 11.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-faint); }
+.admin-stat__value { font-family: var(--font-display); font-weight: 700; font-size: 24px; margin-top: 6px; }
+
+.admin-accts { display: flex; flex-direction: column; gap: 6px; }
+.admin-acct-row { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-family: var(--font-mono); }
+.admin-acct-row .btn { padding: 4px 10px; font-size: 11.5px; }
+
+.ticket-admin-row { display: flex; align-items: flex-start; gap: 14px; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.ticket-admin-row:last-child { border-bottom: none; }
+.ticket-admin-row__body { flex: 1; min-width: 0; }
+.ticket-admin-row__subject { font-weight: 600; font-size: 13.5px; }
+.ticket-admin-row__msg { font-size: 12.5px; color: var(--text-dim); margin-top: 4px; }
+.ticket-admin-row__meta { font-size: 11px; color: var(--text-faint); font-family: var(--font-mono); margin-top: 6px; }
+.ticket-admin-row__side { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
