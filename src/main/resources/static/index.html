@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CryptoBank — NetBanking</title>
+  <meta name="description" content="CryptoBank NetBanking — accounts, transfers, bill pay, cards, deposits, loans and more." />
+  <link rel="icon" href="/assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/bank.css" />
+  <script src="/js/theme-init.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <a href="/index.html" class="sidebar__brand" aria-label="CryptoBank home">
+        <img src="/assets/logo.svg" alt="CryptoBank" />
+        <div>
+          <div class="sidebar__brand-name">CryptoBank</div>
+          <div class="sidebar__brand-sub">NetBanking</div>
+        </div>
+      </a>
+
+      <nav class="nav" id="nav">
+        <div class="nav__group-label">Menu</div>
+        <button class="nav__item is-active" data-view="dashboard" type="button">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="5" rx="1.5"/><rect x="13" y="12" width="8" height="9" rx="1.5"/><rect x="3" y="15" width="8" height="6" rx="1.5"/></svg>
+          Dashboard
+        </button>
+        <button class="nav__item" data-view="accounts" type="button">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3.2"/></svg>
+          Accounts
+        </button>
+        <button class="nav__item" data-view="transfers" type="button">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4-4 4M21 7H9M7 21l-4-4 4-4M3 17h12"/></svg>
+          Transfers
+        </button>
+        <button class="nav__item" data-view="deposits" type="button">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Deposits &amp; Loans
+        </button>
+        <button class="nav__item" data-view="cards" type="button">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg>
+          Cards
+        </button>
+        <button class="nav__item" data-view="billpay" type="button">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+          Bill Pay &amp; Recharge
+        </button>
+        <button class="nav__item" data-view="beneficiaries" type="button">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Beneficiaries
+        </button>
+        <div class="nav__group-label">Account</div>
+        <button class="nav__item" data-view="profile" type="button">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+          Profile &amp; KYC
+        </button>
+        <button class="nav__item" data-view="support" type="button">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.6-2.2 2-2.5 3.4M12 17h.01"/></svg>
+          Support
+        </button>
+        <a class="nav__item" id="adminNavLink" href="/admin.html" hidden>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/></svg>
+          Admin console
+        </a>
+      </nav>
+
+      <div class="sidebar__foot">
+        <div class="sidebar__helpline">
+          24×7 Customer Care
+          <b>1800&#8209;000&#8209;0000</b>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main-col">
+      <header class="appbar">
+        <button class="icon-toggle" id="menuToggle" aria-label="Menu" style="display:none">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div class="appbar__title" id="viewTitle">Dashboard</div>
+
+        <div class="appbar__right">
+          <div class="dropdown">
+            <button class="icon-toggle" id="notifBtn" aria-label="Notifications" title="Notifications">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="icon-toggle__dot" id="notifDot" hidden></span>
+            </button>
+            <div class="dropdown__panel" id="notifPanel">
+              <div class="dropdown__head">Notifications</div>
+              <div id="notifList"><div class="dropdown__empty">You're all caught up.</div></div>
+            </div>
+          </div>
+
+          <div class="theme-toggle" role="group" aria-label="Theme">
+            <button type="button" data-theme-set="light" aria-label="Light" title="Light"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+            <button type="button" data-theme-set="dark" aria-label="Dark" title="Dark"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></button>
+            <button type="button" data-theme-set="system" aria-label="System" title="System"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></button>
+          </div>
+          <div class="user-chip"><span>Signed in as</span> <b id="userName">—</b></div>
+          <button class="btn btn--ghost btn--sm" id="logoutBtn">Sign out</button>
+        </div>
+      </header>
+
+      <main class="wrap">
+
+        <!-- ================= DASHBOARD ================= -->
+        <section class="view is-active view-panel" data-view="dashboard">
+          <div class="row-between">
+            <div>
+              <h1 class="section-title">Welcome back<span id="dashName"></span></h1>
+              <p class="section-sub">Here's what's happening with your money today.</p>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div class="stat-card__label">Total balance</div>
+              <div class="stat-card__value" id="statTotal"><span class="cur">₹</span>0.00</div>
+              <div class="stat-card__meta" id="statAccountsCount">0 accounts</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card__label">Money in (recent)</div>
+              <div class="stat-card__value" id="statIn"><span class="cur">₹</span>0.00</div>
+              <div class="stat-card__meta">Across recent activity</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card__label">Money out (recent)</div>
+              <div class="stat-card__value" id="statOut"><span class="cur">₹</span>0.00</div>
+              <div class="stat-card__meta">Across recent activity</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card__label">Saved beneficiaries</div>
+              <div class="stat-card__value" id="statBenef">0</div>
+              <div class="stat-card__meta">Ready for quick transfer</div>
+            </div>
+          </div>
+
+          <div class="promo-banner">
+            <div>
+              <div class="promo-banner__title">Grow your savings with a Fixed Deposit</div>
+              <div class="promo-banner__sub">Earn up to 7.25% p.a. Use the deposit calculator to see how much your money can grow.</div>
+            </div>
+            <button class="btn btn--primary btn--sm" data-goto="deposits">Explore deposits</button>
+          </div>
+
+          <div class="row-between" style="margin-bottom:12px">
+            <h2 class="section-title" style="font-size:18px">Quick actions</h2>
+          </div>
+          <div class="quick-grid">
+            <div class="quick-tile" data-quick="transfer">
+              <span class="quick-tile__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4-4 4M21 7H9M7 21l-4-4 4-4M3 17h12"/></svg></span>
+              <span class="quick-tile__label">Transfer</span>
+            </div>
+            <div class="quick-tile" data-quick="credit">
+              <span class="quick-tile__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span>
+              <span class="quick-tile__label">Deposit</span>
+            </div>
+            <div class="quick-tile" data-quick="debit">
+              <span class="quick-tile__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></span>
+              <span class="quick-tile__label">Withdraw</span>
+            </div>
+            <div class="quick-tile" data-goto="billpay">
+              <span class="quick-tile__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></span>
+              <span class="quick-tile__label">Pay bills</span>
+            </div>
+            <div class="quick-tile" data-goto="beneficiaries">
+              <span class="quick-tile__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+              <span class="quick-tile__label">Add payee</span>
+            </div>
+            <div class="quick-tile" data-goto="cards">
+              <span class="quick-tile__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg></span>
+              <span class="quick-tile__label">Manage cards</span>
+            </div>
+          </div>
+
+          <div class="row-between" style="margin-bottom:12px">
+            <h2 class="section-title" style="font-size:18px">Your accounts</h2>
+          </div>
+          <div class="cards-rail" id="dashCardsRail"></div>
+
+          <div class="statement">
+            <div class="statement__head">
+              <div class="statement__title">Recent activity</div>
+              <button class="btn btn--ghost btn--sm" data-goto="accounts">View full statement</button>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>Description</th><th>Date</th><th class="num">Amount</th></tr></thead>
+                <tbody id="recentBody"><tr><td colspan="3"><div class="state"><div class="state__title">Loading…</div></div></td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= ACCOUNTS ================= -->
+        <section class="view view-panel" data-view="accounts">
+          <div class="row-between">
+            <div>
+              <h1 class="section-title">Your accounts</h1>
+              <p class="section-sub" id="accountsSub">Select an account to view its statement.</p>
+            </div>
+          </div>
+
+          <div class="cards-rail" id="cardsRail"></div>
+
+          <section id="detailSection" hidden>
+            <div class="actions-bar">
+              <button class="btn btn--primary btn--sm" data-action="credit">Deposit</button>
+              <button class="btn btn--ghost btn--sm" data-action="debit">Withdraw</button>
+              <button class="btn btn--ghost btn--sm" data-action="transfer">Transfer</button>
+              <button class="btn btn--ghost btn--sm" id="downloadStatementBtn">Download statement (CSV)</button>
+            </div>
+
+            <div class="statement">
+              <div class="statement__head">
+                <div>
+                  <div class="statement__title">Statement</div>
+                  <div class="statement__acct" id="statementAcct">—</div>
+                </div>
+              </div>
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr><th>Description</th><th>Date</th><th class="num">Amount</th><th class="num">Balance</th></tr>
+                  </thead>
+                  <tbody id="ledgerBody"></tbody>
+                </table>
+              </div>
+              <div class="pagination" id="pagination" hidden>
+                <span class="pagination__info" id="pageInfo"></span>
+                <div class="pagination__controls">
+                  <button class="icon-btn" id="prevPage" aria-label="Previous">‹</button>
+                  <span class="pagination__page" id="pageIndicator"></span>
+                  <button class="icon-btn" id="nextPage" aria-label="Next">›</button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <!-- ================= TRANSFERS ================= -->
+        <section class="view view-panel" data-view="transfers">
+          <div class="row-between">
+            <div>
+              <h1 class="section-title">Transfers</h1>
+              <p class="section-sub">Move money between your accounts or to a saved payee.</p>
+            </div>
+            <button class="btn btn--primary btn--sm" id="newTransferBtn">New transfer</button>
+          </div>
+
+          <div class="grid-2">
+            <div class="panel">
+              <div class="panel__title">Transfer types</div>
+              <div class="panel__sub">All transfers are secured with your account PIN.</div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div class="list-row">
+                  <div class="list-row__avatar"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3.2"/></svg></div>
+                  <div><div class="list-row__name">Own account transfer</div><div class="list-row__meta">Between your CryptoBank accounts · instant</div></div>
+                </div>
+                <div class="list-row">
+                  <div class="list-row__avatar"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"/></svg></div>
+                  <div><div class="list-row__name">To another account (NEFT/IMPS style)</div><div class="list-row__meta">Any account number · instant in this demo</div></div>
+                </div>
+                <div class="list-row">
+                  <div class="list-row__avatar"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+                  <div><div class="list-row__name">To a saved beneficiary</div><div class="list-row__meta">Pick from your payee list</div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel__title">Send to a beneficiary</div>
+              <div class="panel__sub">Quick-transfer to one of your saved payees.</div>
+              <div id="transferBenefList"><div class="empty-hint">No saved beneficiaries yet. Add one from the Beneficiaries tab.</div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= DEPOSITS & LOANS ================= -->
+        <section class="view view-panel" data-view="deposits">
+          <div class="row-between">
+            <div>
+              <h1 class="section-title">Deposits &amp; Loans</h1>
+              <p class="section-sub">Plan your savings and borrowing — calculators update instantly.</p>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="panel">
+              <div class="panel__title">Fixed / Recurring Deposit calculator</div>
+              <div class="panel__sub">Estimate maturity value on a lump-sum or monthly deposit.</div>
+
+              <div class="tag-select" id="fdType">
+                <button type="button" class="is-active" data-type="fd">Fixed Deposit</button>
+                <button type="button" data-type="rd">Recurring Deposit</button>
+              </div>
+
+              <div class="field" style="margin-top:14px">
+                <label id="fdAmountLabel">Deposit amount <span class="req">*</span></label>
+                <input id="fdAmount" class="mono" inputmode="decimal" placeholder="e.g. 100000" value="100000" />
+              </div>
+              <div class="field">
+                <label>Tenure (months): <span id="fdTenureVal">24</span></label>
+                <div class="range-row">
+                  <input type="range" id="fdTenure" min="3" max="120" value="24" />
+                </div>
+              </div>
+              <div class="field">
+                <label>Interest rate (% p.a.): <span id="fdRateVal">6.50</span></label>
+                <div class="range-row">
+                  <input type="range" id="fdRate" min="3" max="9" step="0.05" value="6.5" />
+                </div>
+              </div>
+
+              <div class="result-strip">
+                <div class="result-tile"><div class="result-tile__label">Invested</div><div class="result-tile__value" id="fdInvested">₹0</div></div>
+                <div class="result-tile"><div class="result-tile__label">Interest earned</div><div class="result-tile__value" id="fdInterest">₹0</div></div>
+                <div class="result-tile"><div class="result-tile__label">Maturity value</div><div class="result-tile__value" id="fdMaturity">₹0</div></div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel__title">Loan EMI calculator</div>
+              <div class="panel__sub">Estimate your monthly instalment on a personal, home, or auto loan.</div>
+
+              <div class="tag-select" id="loanType">
+                <button type="button" class="is-active" data-rate="10.5">Personal</button>
+                <button type="button" data-rate="8.4">Home</button>
+                <button type="button" data-rate="9.2">Auto</button>
+              </div>
+
+              <div class="field" style="margin-top:14px">
+                <label>Loan amount <span class="req">*</span></label>
+                <input id="loanAmount" class="mono" inputmode="decimal" placeholder="e.g. 500000" value="500000" />
+              </div>
+              <div class="field">
+                <label>Tenure (months): <span id="loanTenureVal">36</span></label>
+                <div class="range-row">
+                  <input type="range" id="loanTenure" min="6" max="360" value="36" />
+                </div>
+              </div>
+              <div class="field">
+                <label>Interest rate (% p.a.): <span id="loanRateVal">10.50</span></label>
+                <div class="range-row">
+                  <input type="range" id="loanRate" min="6" max="18" step="0.05" value="10.5" />
+                </div>
+              </div>
+
+              <div class="result-strip">
+                <div class="result-tile"><div class="result-tile__label">Monthly EMI</div><div class="result-tile__value" id="loanEmi">₹0</div></div>
+                <div class="result-tile"><div class="result-tile__label">Total interest</div><div class="result-tile__value" id="loanInterest">₹0</div></div>
+                <div class="result-tile"><div class="result-tile__label">Total payment</div><div class="result-tile__value" id="loanTotal">₹0</div></div>
+              </div>
+            </div>
+          </div>
+          <p class="note-strip" style="margin-top:18px">Rates shown are illustrative defaults for this demo and are not live offers. These calculators run entirely in your browser.</p>
+        </section>
+
+        <!-- ================= CARDS ================= -->
+        <section class="view view-panel" data-view="cards">
+          <div class="row-between">
+            <div>
+              <h1 class="section-title">Cards</h1>
+              <p class="section-sub">Manage your debit cards, freeze them instantly, or request a new one.</p>
+            </div>
+          </div>
+          <div id="cardsViewBody"></div>
+        </section>
+
+        <!-- ================= BILL PAY ================= -->
+        <section class="view view-panel" data-view="billpay">
+          <div class="row-between">
+            <div>
+              <h1 class="section-title">Bill Pay &amp; Recharge</h1>
+              <p class="section-sub">Pay a biller directly from one of your accounts — recorded in your statement.</p>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="panel">
+              <div class="panel__title">Pay a bill</div>
+              <div class="panel__sub">Select a category, enter details, and confirm with your PIN.</div>
+              <form id="billForm" novalidate style="display:flex;flex-direction:column;gap:14px">
+                <div class="field">
+                  <label>Biller category <span class="req">*</span></label>
+                  <select name="category" id="billCategory">
+                    <option>Electricity</option>
+                    <option>Mobile Recharge</option>
+                    <option>DTH / Cable</option>
+                    <option>Water Bill</option>
+                    <option>Broadband / Wi-Fi</option>
+                    <option>Credit Card Bill</option>
+                    <option>Insurance Premium</option>
+                    <option>LPG Gas Booking</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Consumer / mobile number <span class="req">*</span></label>
+                  <input name="consumer" class="mono" placeholder="e.g. 9876543210" />
+                  <span class="field__error" data-error="consumer"></span>
+                </div>
+                <div class="field">
+                  <label>Pay from account <span class="req">*</span></label>
+                  <select name="account" id="billAccount"></select>
+                </div>
+                <div class="field">
+                  <label>Amount <span class="req">*</span></label>
+                  <input name="amount" class="mono" inputmode="decimal" placeholder="0.00" />
+                  <span class="field__error" data-error="amount"></span>
+                </div>
+                <div class="field">
+                  <label>Security PIN <span class="req">*</span></label>
+                  <input name="pin" class="mono" type="password" inputmode="numeric" placeholder="••••" maxlength="6" />
+                  <span class="field__error" data-error="pin"></span>
+                </div>
+                <button type="submit" class="btn btn--primary btn--block" id="billSubmit">Pay bill</button>
+              </form>
+            </div>
+
+            <div class="panel">
+              <div class="panel__title">Recent bill payments</div>
+              <div class="panel__sub">Payments you've made through this screen this session.</div>
+              <div id="billHistory"><div class="empty-hint">No bill payments yet.</div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= BENEFICIARIES ================= -->
+        <section class="view view-panel" data-view="beneficiaries">
+          <div class="row-between">
+            <div>
+              <h1 class="section-title">Beneficiaries</h1>
+              <p class="section-sub">Save payees for faster transfers next time.</p>
+            </div>
+            <button class="btn btn--primary btn--sm" id="addBenefBtn">Add beneficiary</button>
+          </div>
+          <div class="panel">
+            <div id="benefList"><div class="empty-hint">No beneficiaries saved yet.</div></div>
+          </div>
+        </section>
+
+        <!-- ================= PROFILE ================= -->
+        <section class="view view-panel" data-view="profile">
+          <div class="row-between">
+            <div>
+              <h1 class="section-title">Profile &amp; KYC</h1>
+              <p class="section-sub">Your registered details.</p>
+            </div>
+            <span class="kyc-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg> KYC verified</span>
+          </div>
+
+          <div class="panel">
+            <div class="panel__title">Personal details</div>
+            <div class="panel__sub">Contact CryptoBank support to update these.</div>
+            <div class="profile-grid">
+              <div class="profile-row"><label>Full name</label><div class="val" id="profName">—</div></div>
+              <div class="profile-row"><label>Email</label><div class="val" id="profEmail">—</div></div>
+              <div class="profile-row"><label>Registered mobile</label><div class="val" id="profPhone">—</div></div>
+              <div class="profile-row"><label>Customer ID</label><div class="val" id="profCustId">—</div></div>
+              <div class="profile-row"><label>Date of birth</label><div class="val" id="profDob">—</div></div>
+              <div class="profile-row"><label>PAN</label><div class="val" id="profPan">—</div></div>
+              <div class="profile-row"><label>Address on file</label><div class="val" id="profAddress">—</div></div>
+              <div class="profile-row"><label>Communication preference</label><div class="val">Email &amp; SMS</div></div>
+            </div>
+            <div class="note-strip">Profile fields here reflect what you provided at sign-up — no personal data is shared beyond this app's own accounts.</div>
+          </div>
+
+          <div class="panel" style="margin-top:20px">
+            <div class="panel__title">Two-factor authentication</div>
+            <div class="panel__sub">Add an authenticator-app code on top of your password for sign-in and large transfers.</div>
+
+            <div id="twofaOff">
+              <div class="row-between" style="gap:12px">
+                <span class="status-pill status-pill--frozen" id="twofaOffBadge">Disabled</span>
+                <button class="btn btn--primary btn--sm" id="twofaStartBtn">Enable 2FA</button>
+              </div>
+            </div>
+
+            <div id="twofaSetup" hidden style="max-width:460px;display:flex;flex-direction:column;gap:14px">
+              <div class="note-strip">Add this key to Google Authenticator, Authy, or any TOTP app as a <b>Time-based</b> key, then enter the 6-digit code it shows.</div>
+              <div class="field">
+                <label>Manual entry key</label>
+                <div style="display:flex;gap:8px">
+                  <input class="mono" id="twofaSecret" readonly style="flex:1" />
+                  <button type="button" class="btn btn--ghost btn--sm" id="twofaCopyBtn">Copy</button>
+                </div>
+              </div>
+              <form id="twofaEnableForm" novalidate style="display:flex;flex-direction:column;gap:12px">
+                <div class="field">
+                  <label>6-digit code from your app <span class="req">*</span></label>
+                  <input name="code" class="mono" inputmode="numeric" maxlength="6" placeholder="000000" style="letter-spacing:.25em" />
+                  <span class="field__error" data-error="code"></span>
+                </div>
+                <div style="display:flex;gap:10px">
+                  <button type="submit" class="btn btn--primary" id="twofaEnableSubmit">Confirm &amp; enable</button>
+                  <button type="button" class="btn btn--ghost" id="twofaCancelBtn">Cancel</button>
+                </div>
+              </form>
+            </div>
+
+            <div id="twofaOn" hidden>
+              <div class="row-between" style="gap:12px;margin-bottom:14px">
+                <span class="status-pill status-pill--active">Enabled</span>
+                <span class="section-sub" style="margin:0">Transfers of ₹50,000+ will ask for a code.</span>
+              </div>
+              <form id="twofaDisableForm" novalidate style="display:flex;flex-direction:column;gap:14px;max-width:420px">
+                <div class="field">
+                  <label>Current password <span class="req">*</span></label>
+                  <div class="field--password">
+                    <input name="password" type="password" autocomplete="current-password" placeholder="••••••••" />
+                    <button type="button" class="field__eye" data-toggle-pw aria-label="Show password" aria-pressed="false">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-open"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-closed"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.6 21.6 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a21.6 21.6 0 0 1-2.61 3.68M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>
+                    </button>
+                  </div>
+                  <span class="field__error" data-error="password"></span>
+                </div>
+                <div class="field">
+                  <label>6-digit code <span class="req">*</span></label>
+                  <input name="code" class="mono" inputmode="numeric" maxlength="6" placeholder="000000" style="letter-spacing:.25em" />
+                  <span class="field__error" data-error="code"></span>
+                </div>
+                <button type="submit" class="btn btn--danger" id="twofaDisableSubmit" style="align-self:flex-start">Disable 2FA</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-top:20px">
+            <div class="panel__title">Password</div>
+            <div class="panel__sub">Change the password used to sign in to your account.</div>
+            <form id="passwordForm" novalidate style="display:flex;flex-direction:column;gap:14px;max-width:420px">
+              <div class="field">
+                <label>Current password <span class="req">*</span></label>
+                <div class="field--password">
+                  <input name="currentPassword" type="password" autocomplete="current-password" placeholder="••••••••" />
+                  <button type="button" class="field__eye" data-toggle-pw aria-label="Show password" aria-pressed="false">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-open"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-closed"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.6 21.6 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a21.6 21.6 0 0 1-2.61 3.68M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>
+                  </button>
+                </div>
+                <span class="field__error" data-error="currentPassword"></span>
+              </div>
+              <div class="field">
+                <label>New password <span class="req">*</span></label>
+                <div class="field--password">
+                  <input name="newPassword" type="password" autocomplete="new-password" placeholder="At least 8 characters" />
+                  <button type="button" class="field__eye" data-toggle-pw aria-label="Show password" aria-pressed="false">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-open"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-closed"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.6 21.6 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a21.6 21.6 0 0 1-2.61 3.68M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>
+                  </button>
+                </div>
+                <span class="field__error" data-error="newPassword"></span>
+              </div>
+              <div class="field">
+                <label>Confirm new password <span class="req">*</span></label>
+                <div class="field--password">
+                  <input name="confirmPassword" type="password" autocomplete="new-password" placeholder="Re-enter new password" />
+                  <button type="button" class="field__eye" data-toggle-pw aria-label="Show password" aria-pressed="false">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-open"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-closed"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.6 21.6 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a21.6 21.6 0 0 1-2.61 3.68M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>
+                  </button>
+                </div>
+                <span class="field__error" data-error="confirmPassword"></span>
+              </div>
+              <button type="submit" class="btn btn--primary" id="passwordSubmit" style="align-self:flex-start">Update password</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- ================= SUPPORT ================= -->
+        <section class="view view-panel" data-view="support">
+          <div class="row-between">
+            <div>
+              <h1 class="section-title">Support</h1>
+              <p class="section-sub">Answers to common questions, or reach out to our team.</p>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="panel">
+              <div class="panel__title">Frequently asked questions</div>
+              <div id="faqList"></div>
+            </div>
+            <div class="panel">
+              <div class="panel__title">Contact us</div>
+              <div class="panel__sub">Send a message and our team will get back to you.</div>
+              <form id="supportForm" style="display:flex;flex-direction:column;gap:14px">
+                <div class="field">
+                  <label>Subject <span class="req">*</span></label>
+                  <input name="subject" placeholder="What's this about?" required />
+                </div>
+                <div class="field">
+                  <label>Message <span class="req">*</span></label>
+                  <input name="message" placeholder="Describe your issue" required />
+                </div>
+                <button type="submit" class="btn btn--primary btn--block" id="supportSubmit">Send message</button>
+              </form>
+              <div class="note-strip">24×7 helpline: 1800-000-0000 · support@CryptoBankbank.example</div>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-top:20px">
+            <div class="panel__title">Your recent tickets</div>
+            <div class="panel__sub">Messages you've sent our team, most recent first.</div>
+            <div id="ticketList"><div class="empty-hint">No messages sent yet.</div></div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Money modal (deposit / withdraw) -->
+  <div class="overlay" id="moneyOverlay">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal__head">
+        <div class="modal__title" id="moneyTitle">Deposit</div>
+        <button class="modal__close" id="moneyClose" aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <form id="moneyForm" class="modal__body" novalidate>
+        <div class="field">
+          <label>Amount <span class="req">*</span></label>
+          <input name="amount" class="mono" inputmode="decimal" placeholder="0.00" />
+          <span class="field__error" data-error="amount"></span>
+        </div>
+        <div class="field">
+          <label>Security PIN <span class="req">*</span></label>
+          <input name="pin" class="mono" type="password" inputmode="numeric" placeholder="••••" maxlength="6" />
+          <span class="field__error" data-error="pin"></span>
+        </div>
+        <button type="submit" class="btn btn--primary btn--block" id="moneySubmit">Confirm</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Transfer modal -->
+  <div class="overlay" id="transferOverlay">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal__head">
+        <div class="modal__title">Transfer</div>
+        <button class="modal__close" id="transferClose" aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <form id="transferForm" class="modal__body" novalidate>
+        <div class="field">
+          <label>To account number <span class="req">*</span></label>
+          <input name="toAccountNumber" class="mono" inputmode="numeric" placeholder="e.g. 48210037" />
+          <span class="field__error" data-error="toAccountNumber"></span>
+        </div>
+        <div class="field">
+          <label>Amount <span class="req">*</span></label>
+          <input name="amount" class="mono" inputmode="decimal" placeholder="0.00" />
+          <span class="field__error" data-error="amount"></span>
+        </div>
+        <div class="field">
+          <label>Security PIN <span class="req">*</span></label>
+          <input name="pin" class="mono" type="password" inputmode="numeric" placeholder="••••" maxlength="6" />
+          <span class="field__error" data-error="pin"></span>
+        </div>
+        <div class="field" id="transferTotpField" hidden>
+          <label>2FA code <span class="req">*</span></label>
+          <input name="totpCode" class="mono" inputmode="numeric" maxlength="6" placeholder="000000" style="letter-spacing:.25em" />
+          <span class="field__error" data-error="totpCode"></span>
+        </div>
+        <button type="submit" class="btn btn--primary btn--block" id="transferSubmit">Send transfer</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Open account modal -->
+  <div class="overlay" id="openOverlay">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal__head">
+        <div class="modal__title">Open account</div>
+        <button class="modal__close" id="openClose" aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <form id="openForm" class="modal__body" novalidate>
+        <div class="field">
+          <label>Account holder name <span class="req">*</span></label>
+          <input name="holderName" placeholder="Name on the account" />
+          <span class="field__error" data-error="holderName"></span>
+        </div>
+        <div class="field">
+          <label>Opening balance <span class="req">*</span></label>
+          <input name="openingBalance" class="mono" inputmode="decimal" placeholder="0.00" />
+          <span class="field__error" data-error="openingBalance"></span>
+        </div>
+        <div class="field">
+          <label>Set a security PIN <span class="req">*</span></label>
+          <input name="pin" class="mono" type="password" inputmode="numeric" placeholder="4–6 digits" maxlength="6" />
+          <span class="field__error" data-error="pin"></span>
+        </div>
+        <button type="submit" class="btn btn--primary btn--block" id="openSubmit">Open account</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add beneficiary modal -->
+  <div class="overlay" id="benefOverlay">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal__head">
+        <div class="modal__title">Add beneficiary</div>
+        <button class="modal__close" id="benefClose" aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <form id="benefForm" class="modal__body" novalidate>
+        <div class="field">
+          <label>Beneficiary name <span class="req">*</span></label>
+          <input name="name" placeholder="Full name" required />
+          <span class="field__error" data-error="name"></span>
+        </div>
+        <div class="field">
+          <label>Account number <span class="req">*</span></label>
+          <input name="accountNumber" class="mono" inputmode="numeric" placeholder="e.g. 48210037" required />
+          <span class="field__error" data-error="accountNumber"></span>
+        </div>
+        <div class="field">
+          <label>Nickname (optional)</label>
+          <input name="nickname" placeholder="e.g. Landlord, Mom" />
+        </div>
+        <button type="submit" class="btn btn--primary btn--block">Save beneficiary</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+  <script src="/js/app.js"></script>
+</body>
+</html>

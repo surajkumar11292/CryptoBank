@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Console — CryptoBank</title>
+  <link rel="icon" href="/assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/bank.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+  <script src="/js/theme-init.js"></script>
+</head>
+<body>
+  <div class="admin-shell">
+    <header class="admin-header">
+      <a href="/index.html" class="sidebar__brand" aria-label="CryptoBank home">
+        <img src="/assets/logo.svg" alt="CryptoBank" />
+        <div>
+          <div class="sidebar__brand-name">CryptoBank</div>
+          <div class="sidebar__brand-sub">Admin Console</div>
+        </div>
+      </a>
+      <div class="admin-header__right">
+        <span class="user-chip"><b id="adminName">—</b></span>
+        <a class="btn btn--ghost btn--sm" href="/index.html">Customer view</a>
+        <button class="btn btn--ghost btn--sm" id="logoutBtn">Sign out</button>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <div id="gate" class="state" hidden>
+        <div class="state__title">Admins only</div>
+        <div class="state__hint">This account doesn't have admin access. <a href="/index.html">Back to NetBanking</a></div>
+      </div>
+
+      <div id="adminContent" hidden>
+        <div class="admin-stats" id="adminStats"></div>
+
+        <section class="statement">
+          <div class="statement__head">
+            <div class="statement__title">Users &amp; accounts</div>
+            <span class="section-sub" id="usersCount"></span>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr><th>User</th><th>Email</th><th>Role</th><th>Accounts</th><th>Joined</th></tr>
+              </thead>
+              <tbody id="usersBody">
+                <tr><td colspan="5"><div class="state"><div class="state__title">Loading…</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="statement">
+          <div class="statement__head">
+            <div class="statement__title">Support tickets</div>
+            <span class="section-sub" id="ticketsCount"></span>
+          </div>
+          <div id="ticketList"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+  <script src="/js/admin.js"></script>
+</body>
+</html>
