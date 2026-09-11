@@ -1114,17 +1114,21 @@ function initAiCopilot() {
     const el = document.createElement("div");
     el.className = `ai-msg ai-msg--${role}`;
 
-    let formatted = escapeHtml(text)
-      .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
-      .replace(/^[\*•\-]\s+(.*)$/gm, "<li>$1</li>")
-      .replace(/\n\n/g, "</p><p>")
-      .replace(/\n/g, "<br/>");
+    let clean = escapeHtml(text || "");
+    // Bold
+    clean = clean.replace(/\*\*([^*]+?)\*\*/g, (m, p) => `<strong>${p}</strong>`);
+    // Italic
+    clean = clean.replace(/\*([^*]+?)\*/g, (m, p) => `<em>${p}</em>`);
+    // List items
+    clean = clean.replace(/^\s*[\*•\-]\s+(.+)$/gm, (m, p) => `<li>${p}</li>`);
+    // Wrap lists
+    clean = clean.replace(/(<li>[\s\S]*?<\/li>)/g, (m) => `<ul>${m}</ul>`);
+    // Deduplicate nested/adjacent uls
+    clean = clean.replace(/<\/ul>\s*<ul>/g, "");
+    // Paragraphs & line breaks
+    clean = clean.split(/\n\s*\n/).map(p => `<p>${p.replace(/\n/g, "<br/>")}</p>`).join("");
 
-    if (formatted.includes("<li>")) {
-      formatted = formatted.replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>");
-    }
-
-    el.innerHTML = `<div class="ai-msg__bubble"><p>${formatted}</p></div>`;
+    el.innerHTML = `<div class="ai-msg__bubble">${clean}</div>`;
     messagesBox.appendChild(el);
     messagesBox.scrollTop = messagesBox.scrollHeight;
   }
