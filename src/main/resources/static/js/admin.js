@@ -79,9 +79,19 @@ function renderTickets() {
   el.innerHTML = tickets.map((t) => `
     <div class="ticket-admin-row">
       <div class="ticket-admin-row__body">
-        <div class="ticket-admin-row__subject">${escapeHtml(t.subject)}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <div class="ticket-admin-row__subject">${escapeHtml(t.subject)}</div>
+          <span class="ai-spark-badge" style="font-size:10px;padding:2px 6px;">AI: ${escapeHtml(t.aiCategory || "GENERAL")}</span>
+        </div>
         <div class="ticket-admin-row__msg">${escapeHtml(t.message)}</div>
-        <div class="ticket-admin-row__meta">${escapeHtml(t.ticketNumber)} &middot; ${escapeHtml(t.ownerName)} (${escapeHtml(t.ownerEmail)}) &middot; ${fmtDate(t.createdAt)}</div>
+        <div class="ticket-admin-row__meta">Ticket #${t.id} &middot; ${escapeHtml(t.userFullName || "Customer")} (${escapeHtml(t.userEmail || "")}) &middot; ${fmtDate(t.createdAt)}</div>
+        ${t.aiDraftReply ? `
+        <div class="ai-draft-box" style="margin-top:10px;padding:10px 12px;background:var(--surface-2);border-radius:8px;font-size:12px;border:1px solid var(--border);line-height:1.45;">
+          <div style="font-weight:700;color:#818cf8;display:flex;align-items:center;gap:4px;margin-bottom:4px;">
+            <span>✨ Gemini Auto-Drafted Resolution:</span>
+          </div>
+          <div style="white-space:pre-wrap;color:var(--text-dim);">${escapeHtml(t.aiDraftReply)}</div>
+        </div>` : ""}
       </div>
       <div class="ticket-admin-row__side">
         <span class="status-pill ${t.status === "OPEN" ? "status-pill--open" : "status-pill--closed"}">${escapeHtml(t.status)}</span>

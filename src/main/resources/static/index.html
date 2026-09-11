@@ -149,6 +149,55 @@
             <button class="btn btn--primary btn--sm" data-goto="deposits">Explore deposits</button>
           </div>
 
+          <!-- AI Financial Health & Spending Insights Card -->
+          <div class="ai-insight-card">
+            <div class="ai-insight-card__header">
+              <div class="ai-insight-card__title-box">
+                <span class="ai-spark-badge">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>
+                  Gemini 3.6 Flash Intelligence
+                </span>
+                <h2 class="ai-insight-card__title">Financial Health &amp; Spending Analytics</h2>
+              </div>
+              <button class="btn btn--ghost btn--sm" id="refreshAiInsightsBtn" title="Re-analyze with Gemini">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+                Refresh AI
+              </button>
+            </div>
+            <div class="ai-insight-grid">
+              <div class="ai-score-box">
+                <div class="ai-score-ring">
+                  <svg viewBox="0 0 36 36" class="circular-chart">
+                    <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                    <path id="aiScoreCircle" class="circle" stroke-dasharray="82, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                    <text x="18" y="20.35" class="percentage" id="aiScoreVal">82</text>
+                  </svg>
+                </div>
+                <div class="ai-score-meta">
+                  <div class="ai-score-label">Health Score</div>
+                  <div class="ai-score-grade" id="aiScoreGrade">GOOD</div>
+                </div>
+              </div>
+              <div class="ai-metrics-list">
+                <div class="ai-metric-item">
+                  <span class="ai-metric-lbl">Top Spending</span>
+                  <span class="ai-metric-val" id="aiTopCategory">Utilities &amp; Bills</span>
+                </div>
+                <div class="ai-metric-item">
+                  <span class="ai-metric-lbl">Monthly Burn Rate</span>
+                  <span class="ai-metric-val" id="aiBurnRate">₹0.00</span>
+                </div>
+                <div class="ai-metric-item">
+                  <span class="ai-metric-lbl">Savings Ratio</span>
+                  <span class="ai-metric-val" id="aiSavingsRatio">--</span>
+                </div>
+              </div>
+            </div>
+            <div class="ai-bullets-box" id="aiBulletsList">
+              <div class="ai-bullet"><span class="ai-bullet-ic">✨</span><span>Loading AI portfolio intelligence...</span></div>
+            </div>
+          </div>
+
           <div class="row-between" style="margin-bottom:12px">
             <h2 class="section-title" style="font-size:18px">Quick actions</h2>
           </div>
@@ -667,6 +716,16 @@
           <input name="totpCode" class="mono" inputmode="numeric" maxlength="6" placeholder="000000" style="letter-spacing:.25em" />
           <span class="field__error" data-error="totpCode"></span>
         </div>
+
+        <!-- AI Transfer Fraud & Risk Anomaly Assessment Shield -->
+        <div class="ai-risk-banner" id="transferRiskBanner" hidden>
+          <div class="ai-risk-banner__header">
+            <span class="ai-risk-badge" id="aiRiskBadge">LOW RISK</span>
+            <span class="ai-risk-score" id="aiRiskScore">Risk Score: 15/100</span>
+          </div>
+          <div class="ai-risk-banner__desc" id="aiRiskDesc">Normal transfer activity consistent with historical patterns.</div>
+        </div>
+
         <button type="submit" class="btn btn--primary btn--block" id="transferSubmit">Send transfer</button>
       </form>
     </div>
@@ -728,6 +787,52 @@
   </div>
 
   <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+  <!-- Floating AI Copilot Trigger -->
+  <button class="ai-copilot-trigger" id="aiCopilotTrigger" aria-label="Open AI Financial Copilot" title="Ask CryptoBank Copilot">
+    <span class="ai-copilot-trigger__spark">✨</span>
+    <span class="ai-copilot-trigger__text">AI Copilot</span>
+    <span class="ai-copilot-trigger__badge">Gemini 3.6</span>
+  </button>
+
+  <!-- AI Copilot Chat Drawer / Window -->
+  <div class="ai-chat-drawer" id="aiChatDrawer" role="dialog" aria-modal="true" aria-label="AI Financial Copilot" hidden>
+    <div class="ai-chat-drawer__header">
+      <div class="ai-chat-drawer__brand">
+        <span class="ai-spark-icon">✨</span>
+        <div>
+          <div class="ai-chat-drawer__title">CryptoBank Copilot</div>
+          <div class="ai-chat-drawer__sub">Powered by Gemini 3.6 Flash · Grounded Financial Intelligence</div>
+        </div>
+      </div>
+      <button class="ai-chat-drawer__close" id="aiChatClose" aria-label="Close AI Chat">✕</button>
+    </div>
+
+    <div class="ai-chat-drawer__body" id="aiChatMessages">
+      <div class="ai-msg ai-msg--bot">
+        <div class="ai-msg__bubble">
+          <p>👋 Hello! I'm your <b>CryptoBank AI Copilot</b>, powered by Google Gemini 3.6 Flash.</p>
+          <p>I can analyze your spending, estimate if you can afford big purchases, or suggest personalized savings strategies grounded in your real banking ledger.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick suggestion chips -->
+    <div class="ai-chips-rail" id="aiChipsRail">
+      <button type="button" class="ai-chip" data-prompt="Analyze my recent spending habits">📊 Spending analysis</button>
+      <button type="button" class="ai-chip" data-prompt="Can I afford a ₹15,000 purchase right now?">💡 Affordability check</button>
+      <button type="button" class="ai-chip" data-prompt="How can I optimize my savings this month?">💰 Savings optimization</button>
+      <button type="button" class="ai-chip" data-prompt="What is my monthly burn rate?">🔥 Monthly burn rate</button>
+    </div>
+
+    <form class="ai-chat-drawer__footer" id="aiChatForm">
+      <input type="text" id="aiChatInput" class="ai-chat-input" placeholder="Ask financial question... (e.g. Can I afford ₹5,000 loan EMI?)" autocomplete="off" maxlength="500" required />
+      <button type="submit" class="btn btn--primary btn--sm" id="aiChatSendBtn" aria-label="Send">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      </button>
+    </form>
+  </div>
+
   <script src="/js/app.js"></script>
 </body>
 </html>

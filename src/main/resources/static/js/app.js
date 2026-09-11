@@ -985,7 +985,197 @@ async function init() {
     window.location.href = "/login.html";
   });
 
-  loadAccounts();
+  // Gemini AI Financial Intelligence & Copilot
+  $("#refreshAiInsightsBtn")?.addEventListener("click", loadAiInsights);
+  initAiCopilot();
+  initTransferRiskAssessment();
+
+  await loadAccounts();
+  loadAiInsights();
+}
+
+/* ============================================================
+   AI Financial Intelligence & Copilot Engine (Gemini 3.6 Flash)
+   ============================================================ */
+
+async function loadAiInsights() {
+  const btn = $("#refreshAiInsightsBtn");
+  if (btn) btn.disabled = true;
+  try {
+    const query = activeNumber ? `?accountNumber=${activeNumber}` : "";
+    const data = await api(`/api/ai/insights${query}`);
+
+    // Update Score Circle & Text
+    const scoreVal = $("#aiScoreVal");
+    const scoreCircle = $("#aiScoreCircle");
+    const scoreGrade = $("#aiScoreGrade");
+    if (scoreVal) scoreVal.textContent = data.healthScore;
+    if (scoreGrade) {
+      scoreGrade.textContent = data.healthGrade;
+      scoreGrade.style.color = data.healthScore >= 80 ? "#10b981" : data.healthScore >= 60 ? "#f59e0b" : "#ef4444";
+    }
+    if (scoreCircle) {
+      scoreCircle.setAttribute("stroke-dasharray", `${data.healthScore}, 100`);
+      scoreCircle.style.stroke = data.healthScore >= 80 ? "#10b981" : data.healthScore >= 60 ? "#f59e0b" : "#ef4444";
+    }
+
+    // Metrics
+    if ($("#aiTopCategory")) $("#aiTopCategory").textContent = data.topExpenseCategory || "General";
+    if ($("#aiBurnRate")) $("#aiBurnRate").textContent = "₹" + money(data.monthlyBurnRate);
+    if ($("#aiSavingsRatio")) $("#aiSavingsRatio").textContent = (data.netSavingsRatio != null ? data.netSavingsRatio + "%" : "--");
+
+    // Bullets
+    const bulletsBox = $("#aiBulletsList");
+    if (bulletsBox && data.bulletInsights?.length) {
+      bulletsBox.innerHTML = data.bulletInsights.map((b) => `
+        <div class="ai-bullet">
+          <span class="ai-bullet-ic">💡</span>
+          <span>${escapeHtml(b)}</span>
+        </div>
+      `).join("");
+    }
+  } catch (err) {
+    console.warn("AI Insights load failed:", err);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+function initAiCopilot() {
+  const trigger = $("#aiCopilotTrigger");
+  const drawer = $("#aiChatDrawer");
+  const closeBtn = $("#aiChatClose");
+  const form = $("#aiChatForm");
+  const input = $("#aiChatInput");
+  const messagesBox = $("#aiChatMessages");
+
+  if (!trigger || !drawer) return;
+
+  trigger.addEventListener("click", () => {
+    const isHidden = drawer.hidden;
+    drawer.hidden = !isHidden;
+    if (isHidden && input) input.focus();
+  });
+
+  if (closeBtn) closeBtn.addEventListener("click", () => { drawer.hidden = true; });
+
+  // Quick suggestion chips
+  $$(".ai-chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      const prompt = chip.dataset.prompt;
+      if (prompt && input) {
+        input.value = prompt;
+        form.dispatchEvent(new Event("submit"));
+      }
+    });
+  });
+
+  // Chat Form Submit
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const text = (input.value || "").trim();
+      if (!text) return;
+
+      input.value = "";
+
+      // Append User message
+      appendAiMessage("user", text);
+
+      // Append Typing Indicator
+      const typingId = "aiTyping_" + Date.now();
+      const typingEl = document.createElement("div");
+      typingEl.className = "ai-msg ai-msg--bot";
+      typingEl.id = typingId;
+      typingEl.innerHTML = `
+        <div class="ai-msg__bubble" style="color:var(--text-faint);font-style:italic">
+          <span>✨ Copilot is analyzing your portfolio...</span>
+        </div>
+      `;
+      messagesBox.appendChild(typingEl);
+      messagesBox.scrollTop = messagesBox.scrollHeight;
+
+      try {
+        const res = await api("/api/ai/chat", {
+          method: "POST",
+          body: JSON.stringify({ message: text, accountNumber: activeNumber }),
+        });
+
+        $(`#${typingId}`)?.remove();
+        appendAiMessage("bot", res.reply);
+      } catch (err) {
+        $(`#${typingId}`)?.remove();
+        appendAiMessage("bot", "⚠️ Could not reach Copilot at this moment. Please check your connection or try again.");
+      }
+    });
+  }
+
+  function appendAiMessage(role, text) {
+    const el = document.createElement("div");
+    el.className = `ai-msg ai-msg--${role}`;
+
+    let formatted = escapeHtml(text)
+      .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+      .replace(/^[\*•\-]\s+(.*)$/gm, "<li>$1</li>")
+      .replace(/\n\n/g, "</p><p>")
+      .replace(/\n/g, "<br/>");
+
+    if (formatted.includes("<li>")) {
+      formatted = formatted.replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>");
+    }
+
+    el.innerHTML = `<div class="ai-msg__bubble"><p>${formatted}</p></div>`;
+    messagesBox.appendChild(el);
+    messagesBox.scrollTop = messagesBox.scrollHeight;
+  }
+}
+
+function initTransferRiskAssessment() {
+  const form = $("#transferForm");
+  const banner = $("#transferRiskBanner");
+  const badge = $("#aiRiskBadge");
+  const score = $("#aiRiskScore");
+  const desc = $("#aiRiskDesc");
+
+  if (!form || !banner) return;
+
+  let timer = null;
+
+  const checkRisk = () => {
+    clearTimeout(timer);
+    timer = setTimeout(async () => {
+      const fromAcct = activeNumber;
+      const toAcct = form.elements["toAccountNumber"]?.value.trim();
+      const amountVal = parseFloat(form.elements["amount"]?.value || "0");
+
+      if (!fromAcct || !toAcct || isNaN(amountVal) || amountVal <= 0 || toAcct.length < 4) {
+        banner.hidden = true;
+        return;
+      }
+
+      try {
+        const res = await api("/api/ai/assess-transfer-risk", {
+          method: "POST",
+          body: JSON.stringify({
+            fromAccountNumber: Number(fromAcct),
+            toAccountNumber: Number(toAcct),
+            amount: amountVal,
+          }),
+        });
+
+        banner.dataset.risk = res.riskLevel;
+        if (badge) badge.textContent = `${res.riskLevel} RISK`;
+        if (score) score.textContent = `Anomaly Score: ${res.riskScore}/100`;
+        if (desc) desc.textContent = `${res.analysis} ${res.recommendation}`;
+        banner.hidden = false;
+      } catch {
+        banner.hidden = true;
+      }
+    }, 450);
+  };
+
+  form.elements["amount"]?.addEventListener("input", checkRisk);
+  form.elements["toAccountNumber"]?.addEventListener("input", checkRisk);
 }
 
 document.addEventListener("DOMContentLoaded", init);
