@@ -2,6 +2,7 @@ package com.cryptobank.web.dto.response;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public record AiInsightResponse(
         int healthScore,
@@ -12,6 +13,7 @@ public record AiInsightResponse(
         BigDecimal monthlyBurnRate,
         BigDecimal monthlyInflow,
         BigDecimal netSavingsRatio,
+        Map<String, BigDecimal> categoryBreakdown,
         String engine,
         String generatedAt
 ) {}

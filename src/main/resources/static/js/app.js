@@ -70,7 +70,7 @@ async function refreshCards() {
 
 /* ---------- view routing ---------- */
 const VIEW_TITLES = {
-  dashboard: "Dashboard", accounts: "Accounts", transfers: "Transfers",
+  dashboard: "Dashboard", analytics: "Spending & Analytics", accounts: "Accounts", transfers: "Transfers",
   deposits: "Deposits & Loans", cards: "Cards", billpay: "Bill Pay & Recharge",
   beneficiaries: "Beneficiaries", profile: "Profile & KYC", support: "Support",
 };
@@ -80,6 +80,7 @@ function goToView(name) {
   $$(".nav__item[data-view]").forEach((b) => b.classList.toggle("is-active", b.dataset.view === name));
   $("#viewTitle").textContent = VIEW_TITLES[name] || "CryptoBank";
   window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+  if (name === "analytics") loadAnalyticsView();
   if (name === "cards") renderCardsView();
   if (name === "beneficiaries") loadAndRenderBeneficiaries();
   if (name === "transfers") loadAndRenderTransferBenefList();
@@ -985,152 +986,95 @@ async function init() {
     window.location.href = "/login.html";
   });
 
-  // Gemini AI Financial Intelligence & Copilot
-  $("#refreshAiInsightsBtn")?.addEventListener("click", loadAiInsights);
-  initAiCopilot();
+  // Spending & Analytics View and Transfer Risk Shield
+  $("#refreshAnalyticsBtn")?.addEventListener("click", loadAnalyticsView);
   initTransferRiskAssessment();
 
   await loadAccounts();
-  loadAiInsights();
+  loadAnalyticsView();
 }
 
 /* ============================================================
-   AI Financial Intelligence & Copilot Engine (Gemini 3.6 Flash)
+   AI Financial Intelligence Engine: Spending & Risk Analytics
    ============================================================ */
 
-async function loadAiInsights() {
-  const btn = $("#refreshAiInsightsBtn");
+async function loadAnalyticsView() {
+  const btn = $("#refreshAnalyticsBtn");
   if (btn) btn.disabled = true;
   try {
     const query = activeNumber ? `?accountNumber=${activeNumber}` : "";
     const data = await api(`/api/ai/insights${query}`);
 
-    // Update Score Circle & Text
-    const scoreVal = $("#aiScoreVal");
-    const scoreCircle = $("#aiScoreCircle");
-    const scoreGrade = $("#aiScoreGrade");
-    if (scoreVal) scoreVal.textContent = data.healthScore;
+    // Update KPI Score & Subtitle
+    const scoreVal = $("#anScoreVal");
+    const scoreGrade = $("#anScoreGrade");
+    if (scoreVal) scoreVal.textContent = data.healthScore != null ? `${data.healthScore}/100` : "--";
     if (scoreGrade) {
-      scoreGrade.textContent = data.healthGrade;
-      scoreGrade.style.color = data.healthScore >= 80 ? "#10b981" : data.healthScore >= 60 ? "#f59e0b" : "#ef4444";
-    }
-    if (scoreCircle) {
-      scoreCircle.setAttribute("stroke-dasharray", `${data.healthScore}, 100`);
-      scoreCircle.style.stroke = data.healthScore >= 80 ? "#10b981" : data.healthScore >= 60 ? "#f59e0b" : "#ef4444";
+      scoreGrade.textContent = `Grade: ${data.healthGrade || "Good"}`;
+      scoreGrade.style.color = (data.healthScore >= 80) ? "var(--credit)" : (data.healthScore >= 60) ? "var(--gold)" : "var(--danger)";
     }
 
-    // Metrics
-    if ($("#aiTopCategory")) $("#aiTopCategory").textContent = data.topExpenseCategory || "General";
-    if ($("#aiBurnRate")) $("#aiBurnRate").textContent = "₹" + money(data.monthlyBurnRate);
-    if ($("#aiSavingsRatio")) $("#aiSavingsRatio").textContent = (data.netSavingsRatio != null ? data.netSavingsRatio + "%" : "--");
+    // Burn rate, Inflow rate, Savings rate
+    if ($("#anBurnRate")) $("#anBurnRate").textContent = "₹" + money(data.monthlyBurnRate || 0);
+    if ($("#anInflowRate")) $("#anInflowRate").textContent = "₹" + money(data.monthlyInflow || 0);
+    if ($("#anSavingsRate")) {
+      const sRate = data.netSavingsRatio != null ? data.netSavingsRatio : 0;
+      $("#anSavingsRate").textContent = `${sRate > 0 ? "+" : ""}${sRate}%`;
+      $("#anSavingsRate").style.color = sRate >= 0 ? "var(--credit)" : "var(--danger)";
+    }
 
-    // Bullets
-    const bulletsBox = $("#aiBulletsList");
-    if (bulletsBox && data.bulletInsights?.length) {
-      bulletsBox.innerHTML = data.bulletInsights.map((b) => `
-        <div class="ai-bullet">
-          <span class="ai-bullet-ic">💡</span>
-          <span>${escapeHtml(b)}</span>
-        </div>
-      `).join("");
+    // Category Breakdown Progress Bars
+    const catBox = $("#anCategoryList");
+    if (catBox) {
+      if (data.categoryBreakdown && Object.keys(data.categoryBreakdown).length > 0) {
+        const total = Object.values(data.categoryBreakdown).reduce((sum, v) => sum + Number(v), 0) || 1;
+        const sortedCats = Object.entries(data.categoryBreakdown).sort((a, b) => b[1] - a[1]);
+        catBox.innerHTML = sortedCats.map(([cat, amt]) => {
+          const pct = Math.min(100, Math.max(2, Math.round((amt / total) * 100)));
+          return `
+            <div class="category-row">
+              <div class="category-row__info">
+                <span class="category-row__name">${escapeHtml(cat)}</span>
+                <span class="category-row__val">₹${money(amt)} <span class="category-row__pct">(${pct}%)</span></span>
+              </div>
+              <div class="category-row__bar">
+                <div class="category-row__fill" style="width: ${pct}%;"></div>
+              </div>
+            </div>
+          `;
+        }).join("");
+      } else {
+        catBox.innerHTML = `
+          <div class="empty-state" style="padding: var(--sp-md) 0;">
+            <p style="color: var(--text-faint); font-size: 0.875rem;">No debit transactions recorded yet for category clustering.</p>
+          </div>
+        `;
+      }
+    }
+
+    // AI Cash Flow & Health Recommendations
+    const bulletsBox = $("#anBulletsList");
+    if (bulletsBox) {
+      if (data.bulletInsights && data.bulletInsights.length > 0) {
+        bulletsBox.innerHTML = data.bulletInsights.map((b) => `
+          <div class="ai-bullet-item">
+            <span class="ai-bullet-ic">💡</span>
+            <div class="ai-bullet-text">${escapeHtml(b)}</div>
+          </div>
+        `).join("");
+      } else {
+        bulletsBox.innerHTML = `
+          <div class="ai-bullet-item">
+            <span class="ai-bullet-ic">✅</span>
+            <div class="ai-bullet-text">Your accounts are currently operating with balanced cash flow. No immediate anomalies detected.</div>
+          </div>
+        `;
+      }
     }
   } catch (err) {
-    console.warn("AI Insights load failed:", err);
+    console.warn("Analytics load failed:", err);
   } finally {
     if (btn) btn.disabled = false;
-  }
-}
-
-function initAiCopilot() {
-  const trigger = $("#aiCopilotTrigger");
-  const drawer = $("#aiChatDrawer");
-  const closeBtn = $("#aiChatClose");
-  const form = $("#aiChatForm");
-  const input = $("#aiChatInput");
-  const messagesBox = $("#aiChatMessages");
-
-  if (!trigger || !drawer) return;
-
-  trigger.addEventListener("click", () => {
-    const isHidden = drawer.hidden;
-    drawer.hidden = !isHidden;
-    if (isHidden && input) input.focus();
-  });
-
-  if (closeBtn) closeBtn.addEventListener("click", () => { drawer.hidden = true; });
-
-  // Quick suggestion chips
-  $$(".ai-chip").forEach((chip) => {
-    chip.addEventListener("click", () => {
-      const prompt = chip.dataset.prompt;
-      if (prompt && input) {
-        input.value = prompt;
-        form.dispatchEvent(new Event("submit"));
-      }
-    });
-  });
-
-  // Chat Form Submit
-  if (form) {
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const text = (input.value || "").trim();
-      if (!text) return;
-
-      input.value = "";
-
-      // Append User message
-      appendAiMessage("user", text);
-
-      // Append Typing Indicator
-      const typingId = "aiTyping_" + Date.now();
-      const typingEl = document.createElement("div");
-      typingEl.className = "ai-msg ai-msg--bot";
-      typingEl.id = typingId;
-      typingEl.innerHTML = `
-        <div class="ai-msg__bubble" style="color:var(--text-faint);font-style:italic">
-          <span>✨ Copilot is analyzing your portfolio...</span>
-        </div>
-      `;
-      messagesBox.appendChild(typingEl);
-      messagesBox.scrollTop = messagesBox.scrollHeight;
-
-      try {
-        const res = await api("/api/ai/chat", {
-          method: "POST",
-          body: JSON.stringify({ message: text, accountNumber: activeNumber }),
-        });
-
-        $(`#${typingId}`)?.remove();
-        appendAiMessage("bot", res.reply);
-      } catch (err) {
-        $(`#${typingId}`)?.remove();
-        appendAiMessage("bot", "⚠️ Could not reach Copilot at this moment. Please check your connection or try again.");
-      }
-    });
-  }
-
-  function appendAiMessage(role, text) {
-    const el = document.createElement("div");
-    el.className = `ai-msg ai-msg--${role}`;
-
-    let clean = escapeHtml(text || "");
-    // Bold
-    clean = clean.replace(/\*\*([^*]+?)\*\*/g, (m, p) => `<strong>${p}</strong>`);
-    // Italic
-    clean = clean.replace(/\*([^*]+?)\*/g, (m, p) => `<em>${p}</em>`);
-    // List items
-    clean = clean.replace(/^\s*[\*•\-]\s+(.+)$/gm, (m, p) => `<li>${p}</li>`);
-    // Wrap lists
-    clean = clean.replace(/(<li>[\s\S]*?<\/li>)/g, (m) => `<ul>${m}</ul>`);
-    // Deduplicate nested/adjacent uls
-    clean = clean.replace(/<\/ul>\s*<ul>/g, "");
-    // Paragraphs & line breaks
-    clean = clean.split(/\n\s*\n/).map(p => `<p>${p.replace(/\n/g, "<br/>")}</p>`).join("");
-
-    el.innerHTML = `<div class="ai-msg__bubble">${clean}</div>`;
-    messagesBox.appendChild(el);
-    messagesBox.scrollTop = messagesBox.scrollHeight;
   }
 }
 
@@ -1140,6 +1084,7 @@ function initTransferRiskAssessment() {
   const badge = $("#aiRiskBadge");
   const score = $("#aiRiskScore");
   const desc = $("#aiRiskDesc");
+  const rec = $("#aiRiskRec");
 
   if (!form || !banner) return;
 
@@ -1170,7 +1115,8 @@ function initTransferRiskAssessment() {
         banner.dataset.risk = res.riskLevel;
         if (badge) badge.textContent = `${res.riskLevel} RISK`;
         if (score) score.textContent = `Anomaly Score: ${res.riskScore}/100`;
-        if (desc) desc.textContent = `${res.analysis} ${res.recommendation}`;
+        if (desc) desc.textContent = res.analysis || "";
+        if (rec) rec.textContent = res.recommendation ? `Action: ${res.recommendation}` : "";
         banner.hidden = false;
       } catch {
         banner.hidden = true;

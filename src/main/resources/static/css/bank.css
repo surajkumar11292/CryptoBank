@@ -643,317 +643,77 @@ tbody tr:hover { background: var(--bg-soft); }
 .auth-security-note svg { color: var(--credit); flex-shrink: 0; margin-top: 1px; }
 
 /* ==========================================================================
-   AI COPILOT, AI INSIGHTS & RISK ASSESSMENT STYLES (CRYPTOBANK THEME)
+   SPENDING & ANALYTICS VIEW STYLES (MATCHES CRYPTOBANK SYSTEM)
    ========================================================================== */
-
-/* --- AI Dashboard Insight Card --- */
-.ai-insight-card {
-  margin: 20px 0 26px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 22px 26px;
-  box-shadow: var(--shadow);
-  position: relative;
-  overflow: hidden;
-}
-.ai-insight-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--navy-2) 0%, var(--accent) 55%, var(--gold) 100%);
-}
-.ai-insight-card__header {
+.category-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 18px;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-.ai-insight-card__title-box { display: flex; flex-direction: column; gap: 5px; }
-.ai-insight-card__title { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--text); margin: 0; }
-
-.ai-spark-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 3px 10px;
-  border-radius: 100px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  border: 1px solid var(--accent-line);
-  width: fit-content;
-}
-.ai-spark-badge svg { color: var(--accent); }
-
-.ai-insight-grid {
-  display: grid;
-  grid-template-columns: 180px 1fr;
-  gap: 24px;
-  align-items: center;
-  padding-bottom: 16px;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 0;
   border-bottom: 1px solid var(--border);
 }
-.ai-score-box {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.ai-score-ring { width: 66px; height: 66px; flex-shrink: 0; }
-.circular-chart { display: block; max-width: 100%; max-height: 100%; }
-.circle-bg { fill: none; stroke: var(--surface-3); stroke-width: 3.5; }
-.circle {
-  fill: none;
-  stroke: var(--credit);
-  stroke-width: 3.5;
-  stroke-linecap: round;
-  transition: stroke-dasharray 0.8s var(--ease);
-}
-.percentage {
-  fill: var(--text);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 9.5px;
-  text-anchor: middle;
-}
-.ai-score-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 600; }
-.ai-score-grade { font-size: 14px; font-weight: 700; color: var(--credit); letter-spacing: 0.02em; }
-
-.ai-metrics-list {
-  display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-.ai-metric-item {
-  flex: 1;
-  min-width: 130px;
-  background: var(--surface-2);
-  padding: 12px 16px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.ai-metric-lbl { font-size: 11.5px; color: var(--text-dim); font-weight: 500; }
-.ai-metric-val { font-size: 15px; font-weight: 700; font-family: var(--font-mono); color: var(--text); }
-
-.ai-bullets-box {
-  margin-top: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.ai-bullet {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  font-size: 13px;
-  color: var(--text-dim);
-  line-height: 1.45;
-  padding: 8px 12px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-}
-.ai-bullet-ic { flex-shrink: 0; font-size: 13px; color: var(--gold); }
-
-/* --- Floating AI Copilot Trigger --- */
-.ai-copilot-trigger {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 999;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 11px 18px;
-  background: var(--card-grad);
-  color: var(--on-navy);
-  border: 1px solid var(--accent-line);
-  border-radius: 100px;
-  font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 10px 28px rgba(10, 37, 64, 0.35);
-  transition: transform .18s var(--ease), box-shadow .18s var(--ease), border-color .18s var(--ease);
-}
-.ai-copilot-trigger:hover {
-  transform: translateY(-2px);
-  border-color: var(--gold);
-  box-shadow: 0 14px 32px rgba(10, 37, 64, 0.45);
-}
-.ai-copilot-trigger__spark {
-  color: var(--gold);
-  font-size: 15px;
-}
-.ai-copilot-trigger__badge {
-  font-size: 10.5px;
-  background: rgba(169, 121, 30, 0.2);
-  color: #e5be6d;
-  border: 1px solid rgba(169, 121, 30, 0.35);
-  padding: 2px 7px;
-  border-radius: 10px;
-  font-weight: 600;
-}
-
-/* --- AI Copilot Chat Drawer / Window --- */
-.ai-chat-drawer {
-  position: fixed;
-  bottom: 84px;
-  right: 24px;
-  width: 390px;
-  max-width: calc(100vw - 32px);
-  height: 540px;
-  max-height: calc(100vh - 110px);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  animation: drawer-pop 0.25s var(--ease);
-}
-@keyframes drawer-pop {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.ai-chat-drawer[hidden] { display: none; }
-
-.ai-chat-drawer__header {
+.category-row:last-child { border-bottom: none; }
+.category-row__top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.category-row__amount {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text);
+}
+.category-row__bar {
+  width: 100%;
+  height: 6px;
+  background: var(--surface-3);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.category-row__fill {
+  height: 100%;
+  border-radius: 100px;
   background: var(--card-grad);
-  border-bottom: 1px solid var(--accent-line);
-  color: var(--on-navy);
+  transition: width 0.6s var(--ease);
 }
-.ai-chat-drawer__brand { display: flex; align-items: center; gap: 10px; }
-.ai-spark-icon {
-  width: 30px; height: 30px; border-radius: 7px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: var(--gold); display: grid; place-items: center; font-size: 15px;
-}
-.ai-chat-drawer__title { font-family: var(--font-display); font-weight: 600; font-size: 14.5px; color: #fff; }
-.ai-chat-drawer__sub { font-size: 11px; color: var(--on-navy-dim); }
-.ai-chat-drawer__close {
-  background: none; border: none; font-size: 16px; color: var(--on-navy-dim);
-  cursor: pointer; padding: 4px; border-radius: 6px; line-height: 1;
-}
-.ai-chat-drawer__close:hover { color: #fff; }
 
-.ai-chat-drawer__body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
+.ai-bullet-item {
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
   gap: 12px;
-}
-
-.ai-msg { display: flex; flex-direction: column; max-width: 86%; }
-.ai-msg--user { align-self: flex-end; }
-.ai-msg--bot { align-self: flex-start; }
-
-.ai-msg__bubble {
-  padding: 10px 14px;
-  border-radius: 12px;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   font-size: 13px;
   line-height: 1.5;
-}
-.ai-msg--user .ai-msg__bubble {
-  background: var(--navy-2);
-  color: #ffffff;
-  border-bottom-right-radius: 2px;
-}
-.ai-msg--bot .ai-msg__bubble {
-  background: var(--surface-2);
   color: var(--text);
-  border: 1px solid var(--border);
-  border-bottom-left-radius: 2px;
 }
-.ai-msg__bubble p { margin: 0 0 6px; }
-.ai-msg__bubble p:last-child { margin: 0; }
-.ai-msg__bubble ul { margin: 4px 0 6px 18px; padding: 0; }
-.ai-msg__bubble li { margin-bottom: 3px; }
-
-.ai-chips-rail {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding: 8px 12px;
-  border-top: 1px solid var(--border);
-  background: var(--surface-2);
-  scrollbar-width: none;
-}
-.ai-chips-rail::-webkit-scrollbar { display: none; }
-.ai-chip {
+.ai-bullet-item__icon {
   flex-shrink: 0;
-  padding: 6px 12px;
-  font-size: 11.5px;
-  font-weight: 500;
-  border-radius: 100px;
-  background: var(--surface);
-  color: var(--text-dim);
-  border: 1px solid var(--border-strong);
-  cursor: pointer;
-  transition: all 0.15s var(--ease);
-  white-space: nowrap;
-}
-.ai-chip:hover {
-  background: var(--accent-soft);
-  color: var(--accent);
-  border-color: var(--accent);
+  color: var(--gold);
+  font-size: 14px;
+  margin-top: 1px;
 }
 
-.ai-chat-drawer__footer {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 14px;
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-}
-.ai-chat-input {
-  flex: 1;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 9px 12px;
-  font-size: 13px;
-  font-family: var(--font-ui);
-  background: var(--surface-2);
-  color: var(--text);
-  outline: none;
-}
-.ai-chat-input:focus { border-color: var(--accent); background: var(--surface); }
-
-/* --- AI Risk Assessment Banner (In Transfer Dialog) --- */
+/* --- Institutional Transfer Risk Shield --- */
 .ai-risk-banner {
-  margin: 10px 0 14px;
-  padding: 10px 14px;
+  margin: 12px 0 16px;
+  padding: 12px 14px;
   border-radius: var(--radius-sm);
   background: var(--surface-2);
   border: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
+  font-size: 12px;
 }
-.ai-risk-banner[data-risk="LOW"] { border-color: rgba(30, 142, 90, 0.4); background: var(--credit-bg); }
-.ai-risk-banner[data-risk="MEDIUM"] { border-color: rgba(169, 121, 30, 0.4); background: rgba(169, 121, 30, 0.08); }
-.ai-risk-banner[data-risk="HIGH"] { border-color: rgba(192, 57, 43, 0.4); background: var(--debit-bg); }
+.ai-risk-banner[data-risk="LOW"] { border-color: rgba(30, 142, 90, 0.35); background: var(--credit-bg); }
+.ai-risk-banner[data-risk="MEDIUM"] { border-color: rgba(169, 121, 30, 0.4); background: rgba(169, 121, 30, 0.09); }
+.ai-risk-banner[data-risk="HIGH"] { border-color: rgba(192, 57, 43, 0.45); background: var(--debit-bg); }
 
 .ai-risk-banner__header { display: flex; justify-content: space-between; align-items: center; }
 .ai-risk-badge { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
@@ -962,7 +722,8 @@ tbody tr:hover { background: var(--bg-soft); }
 .ai-risk-banner[data-risk="HIGH"] .ai-risk-badge { color: var(--danger); }
 
 .ai-risk-score { font-size: 11px; font-family: var(--font-mono); color: var(--text-faint); }
-.ai-risk-banner__desc { font-size: 12px; color: var(--text-dim); line-height: 1.4; }
+.ai-risk-banner__desc { font-size: 12.5px; color: var(--text); line-height: 1.45; font-weight: 500; }
+.ai-risk-banner__rec { font-size: 11.5px; color: var(--text-dim); line-height: 1.4; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1024px) {
@@ -986,10 +747,8 @@ tbody tr:hover { background: var(--bg-soft); }
   .auth-stepper__label { font-size: 9px; }
   .review-list__row { flex-direction: column; gap: 2px; }
   .review-list__row span:last-child { text-align: left; }
-  .ai-chat-drawer { right: 12px; left: 12px; width: auto; bottom: 76px; }
-  .ai-copilot-trigger { bottom: 16px; right: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .view-panel, .skeleton, .toast, .bank-card, .bank-card::after, .auth-card, .auth-step, .ai-copilot-trigger { animation: none !important; transition: none !important; }
+  .view-panel, .skeleton, .toast, .bank-card, .bank-card::after, .auth-card, .auth-step { animation: none !important; transition: none !important; }
   * { transition: none !important; }
 }

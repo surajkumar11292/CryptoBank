@@ -113,7 +113,7 @@ public class GeminiAiServiceImpl implements AiService {
             return new AiInsightResponse(
                     70, "FAIR", "No active accounts found. Open your first account to start tracking.",
                     List.of("Open a primary savings account to activate real-time financial tracking."),
-                    "None", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "system", Instant.now().toString()
+                    "None", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, Map.of(), "system", Instant.now().toString()
             );
         }
 
@@ -126,7 +126,7 @@ public class GeminiAiServiceImpl implements AiService {
 
         BigDecimal totalInflow = BigDecimal.ZERO;
         BigDecimal totalOutflow = BigDecimal.ZERO;
-        Map<String, BigDecimal> categorySpend = new HashMap<>();
+        Map<String, BigDecimal> categorySpend = new LinkedHashMap<>();
 
         for (LedgerEntryEntity entry : recentEntries) {
             if (entry.getType() == LedgerType.CREDIT) {
@@ -137,6 +137,13 @@ public class GeminiAiServiceImpl implements AiService {
                 String cat = categorizeTransaction(desc);
                 categorySpend.merge(cat, entry.getAmount(), BigDecimal::add);
             }
+        }
+
+        if (categorySpend.isEmpty()) {
+            categorySpend.put("Utilities & Bills", BigDecimal.ZERO);
+            categorySpend.put("Transfers & Payments", BigDecimal.ZERO);
+            categorySpend.put("Deposits & Savings", BigDecimal.ZERO);
+            categorySpend.put("Telecom & Internet", BigDecimal.ZERO);
         }
 
         String topCategory = categorySpend.entrySet().stream()
@@ -164,8 +171,8 @@ public class GeminiAiServiceImpl implements AiService {
                 Top Spending Category: %s
                 Health Score: %d (%s)
                 
-                Generate exactly 3 bullet points with personalized financial intelligence, budgeting optimization, and savings tips.
-                Format each bullet starting with a bullet emoji (•). Keep each bullet under 25 words.
+                Generate exactly 3 concise bullet points with institutional financial health, cash flow optimization, and savings tips.
+                Format each bullet starting with a bullet emoji (•). Keep each bullet under 25 words. Do not output meta-reasoning.
                 """,
                 PiiMasker.maskAccount(targetAccount.getAccountNumber()),
                 targetAccount.getBalance().toPlainString(),
@@ -175,7 +182,7 @@ public class GeminiAiServiceImpl implements AiService {
                 score, grade
         );
 
-        String aiResponse = callGemini("You are a financial analytics AI. Output 3 concise bullet points only.", prompt);
+        String aiResponse = callGemini("You are a senior banking financial analytics officer. Provide 3 clear bullet points only.", prompt);
         List<String> bulletList = new ArrayList<>();
 
         if (aiResponse != null && !aiResponse.isBlank()) {
@@ -197,7 +204,7 @@ public class GeminiAiServiceImpl implements AiService {
                 grade, score, totalOutflow.toPlainString(), totalInflow.toPlainString());
 
         return new AiInsightResponse(
-                score, grade, summary, bulletList, topCategory, totalOutflow, totalInflow, netSavingsRatio,
+                score, grade, summary, bulletList, topCategory, totalOutflow, totalInflow, netSavingsRatio, categorySpend,
                 aiResponse != null ? "gemini-3.6-flash" : "heuristic-engine",
                 DateTimeFormatter.ISO_INSTANT.format(Instant.now())
         );
@@ -212,14 +219,20 @@ public class GeminiAiServiceImpl implements AiService {
                 .orElse(null);
 
         if (sourceAccount == null || !sourceAccount.getOwner().getId().equals(user.getId())) {
-            return new TransferRiskResponse("HIGH", 90, "Source account not authorized.", false, true, "Do not proceed", "security-guard");
+            return new TransferRiskResponse("HIGH", 95, "Unauthorized transfer source account.", false, true, "Transaction aborted by security guard.", "security-guard");
         }
 
-        // Check if recipient is a saved beneficiary
         boolean isSavedBeneficiary = beneficiaryRepository.findByOwnerIdOrderByCreatedAtDesc(user.getId())
                 .stream().anyMatch(b -> b.getAccountNumber().equals(request.toAccountNumber()));
 
-        // Calculate average transaction amount
+        BigDecimal balance = sourceAccount.getBalance();
+        BigDecimal amount = request.amount();
+
+        BigDecimal drainRatio = BigDecimal.ZERO;
+        if (balance.compareTo(BigDecimal.ZERO) > 0) {
+            drainRatio = amount.divide(balance, 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+        }
+
         List<LedgerEntryEntity> pastDebits = ledgerEntryRepository.findByAccountIdOrderByCreatedAtDesc(
                 sourceAccount.getId(), PageRequest.of(0, 30)).getContent()
                 .stream().filter(e -> e.getType() == LedgerType.DEBIT).toList();
@@ -230,42 +243,80 @@ public class GeminiAiServiceImpl implements AiService {
             avgAmount = sum.divide(BigDecimal.valueOf(pastDebits.size()), 2, RoundingMode.HALF_UP);
         }
 
-        boolean isUnusualAmount = request.amount().compareTo(avgAmount.multiply(BigDecimal.valueOf(3.0))) > 0;
-        boolean isHighValue = request.amount().compareTo(BigDecimal.valueOf(50000)) >= 0;
+        boolean isUnusualAmount = amount.compareTo(avgAmount.multiply(BigDecimal.valueOf(2.5))) > 0;
+        boolean isHighValue = amount.compareTo(BigDecimal.valueOf(50000)) >= 0;
+        boolean isDepleting = drainRatio.compareTo(BigDecimal.valueOf(60)) >= 0;
 
-        int riskScore = 15;
-        if (!isSavedBeneficiary) riskScore += 30;
-        if (isUnusualAmount) riskScore += 35;
-        if (isHighValue) riskScore += 15;
+        int calcScore = 12;
+        if (!isSavedBeneficiary) calcScore += 28;
+        if (isUnusualAmount) calcScore += 30;
+        if (isHighValue) calcScore += 15;
+        if (isDepleting) calcScore += 15;
+        calcScore = Math.clamp(calcScore, 10, 98);
 
-        String riskLevel = riskScore >= 70 ? "HIGH" : riskScore >= 40 ? "MEDIUM" : "LOW";
+        String calcLevel = calcScore >= 65 ? "HIGH" : calcScore >= 35 ? "MEDIUM" : "LOW";
 
-        String analysis;
-        String recommendation;
+        String sysInstruction = """
+                You are 'CryptoBank Sentinel AI', an elite banking fraud, anomaly detection, and AML risk engine.
+                Evaluate the customer transfer request and output pure JSON with keys:
+                - "analysis": A clear, professional 1-to-2 sentence risk explanation mentioning the liquidity impact or payee familiarity.
+                - "recommendation": A 1-sentence actionable security directive.
+                Do not include markdown ticks or text outside the JSON object.
+                """;
 
-        if ("HIGH".equals(riskLevel)) {
-            analysis = String.format("Transfer of ₹%s is %.1fx higher than your 30-day average transfer size (₹%s) to an unverified recipient.",
-                    request.amount().toPlainString(),
-                    avgAmount.compareTo(BigDecimal.ZERO) > 0 ? request.amount().divide(avgAmount, 1, RoundingMode.HALF_UP).doubleValue() : 5.0,
-                    avgAmount.toPlainString());
-            recommendation = "Verify the recipient's identity carefully before authorizing with your transaction PIN.";
-        } else if ("MEDIUM".equals(riskLevel)) {
-            analysis = String.format("Transfer amount is moderate. Destination account #%s is not in your saved payees list.",
-                    PiiMasker.maskAccount(request.toAccountNumber()));
-            recommendation = "Consider saving this account as a beneficiary if you plan to transfer regularly.";
-        } else {
-            analysis = String.format("Normal transfer activity consistent with historical patterns. Verified safety profile.");
-            recommendation = "Safe to proceed with transfer authorization.";
+        String userPrompt = String.format("""
+                Transfer Amount: ₹%s
+                Source Account Balance: ₹%s (Transfer drains %.1f%% of available liquidity)
+                Recipient Account: %s (Saved Payee: %s)
+                30-Day Average Debit: ₹%s (Unusual Amount: %s)
+                Evaluated Baseline Risk Level: %s (Score: %d/100)
+                """,
+                amount.toPlainString(),
+                balance.toPlainString(),
+                drainRatio.doubleValue(),
+                PiiMasker.maskAccount(request.toAccountNumber()),
+                isSavedBeneficiary ? "YES" : "NO (New Unverified Payee)",
+                avgAmount.toPlainString(),
+                isUnusualAmount ? "YES" : "NO",
+                calcLevel, calcScore
+        );
+
+        String geminiRaw = callGemini(sysInstruction, userPrompt);
+        String finalAnalysis = null;
+        String finalRecommendation = null;
+
+        if (geminiRaw != null && !geminiRaw.isBlank()) {
+            try {
+                String cleanJson = geminiRaw.replaceAll("```json", "").replaceAll("```", "").trim();
+                JsonNode parsed = objectMapper.readTree(cleanJson);
+                if (parsed.has("analysis")) finalAnalysis = parsed.get("analysis").asText();
+                if (parsed.has("recommendation")) finalRecommendation = parsed.get("recommendation").asText();
+            } catch (Exception ignored) {}
+        }
+
+        if (finalAnalysis == null || finalAnalysis.isBlank()) {
+            if ("HIGH".equals(calcLevel)) {
+                finalAnalysis = String.format("High anomaly: Transfer of ₹%s drains %.1f%% of account liquidity to an unverified recipient.",
+                        amount.toPlainString(), drainRatio.doubleValue());
+                finalRecommendation = "Confirm beneficiary credentials and verify destination details before authorizing with your PIN.";
+            } else if ("MEDIUM".equals(calcLevel)) {
+                finalAnalysis = String.format("Moderate risk: Recipient account #%s is not in your saved payees list.",
+                        PiiMasker.maskAccount(request.toAccountNumber()));
+                finalRecommendation = "Consider saving this payee after transfer if you anticipate recurring payments.";
+            } else {
+                finalAnalysis = "Routine transfer activity consistent with normal account behavioral patterns.";
+                finalRecommendation = "Safe to authorize with your 4-digit security PIN.";
+            }
         }
 
         return new TransferRiskResponse(
-                riskLevel,
-                riskScore,
-                analysis,
+                calcLevel,
+                calcScore,
+                finalAnalysis,
                 !isSavedBeneficiary,
                 isUnusualAmount,
-                recommendation,
-                "gemini-security-shield"
+                finalRecommendation,
+                geminiRaw != null ? "gemini-3.6-flash" : "sentinel-deterministic"
         );
     }
 
@@ -358,19 +409,19 @@ public class GeminiAiServiceImpl implements AiService {
         }
 
         try {
-            String combinedPrompt = (systemInstruction != null && !systemInstruction.isBlank())
-                    ? systemInstruction + "\n\n" + userPrompt
-                    : userPrompt;
-
-            Map<String, Object> payload = Map.of(
-                    "contents", List.of(
-                            Map.of("role", "user", "parts", List.of(Map.of("text", combinedPrompt)))
-                    ),
-                    "generationConfig", Map.of(
-                            "temperature", 0.4,
-                            "maxOutputTokens", 1024
-                    )
-            );
+            Map<String, Object> payload = new LinkedHashMap<>();
+            if (systemInstruction != null && !systemInstruction.isBlank()) {
+                payload.put("system_instruction", Map.of(
+                        "parts", List.of(Map.of("text", systemInstruction))
+                ));
+            }
+            payload.put("contents", List.of(
+                    Map.of("role", "user", "parts", List.of(Map.of("text", userPrompt)))
+            ));
+            payload.put("generationConfig", Map.of(
+                    "temperature", 0.2,
+                    "maxOutputTokens", 1024
+            ));
 
             String requestBody = objectMapper.writeValueAsString(payload);
             String targetUri = String.format("%s/%s:generateContent?key=%s", apiUrl, modelName, key);

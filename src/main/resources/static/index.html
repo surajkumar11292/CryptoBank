@@ -54,6 +54,10 @@
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           Beneficiaries
         </button>
+        <button class="nav__item" data-view="analytics" type="button">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+          Analytics
+        </button>
         <div class="nav__group-label">Account</div>
         <button class="nav__item" data-view="profile" type="button">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
@@ -147,55 +151,6 @@
               <div class="promo-banner__sub">Earn up to 7.25% p.a. Use the deposit calculator to see how much your money can grow.</div>
             </div>
             <button class="btn btn--primary btn--sm" data-goto="deposits">Explore deposits</button>
-          </div>
-
-          <!-- AI Financial Health & Spending Insights Card -->
-          <div class="ai-insight-card">
-            <div class="ai-insight-card__header">
-              <div class="ai-insight-card__title-box">
-                <span class="ai-spark-badge">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>
-                  Gemini 3.6 Flash Intelligence
-                </span>
-                <h2 class="ai-insight-card__title">Financial Health &amp; Spending Analytics</h2>
-              </div>
-              <button class="btn btn--ghost btn--sm" id="refreshAiInsightsBtn" title="Re-analyze with Gemini">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
-                Refresh AI
-              </button>
-            </div>
-            <div class="ai-insight-grid">
-              <div class="ai-score-box">
-                <div class="ai-score-ring">
-                  <svg viewBox="0 0 36 36" class="circular-chart">
-                    <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                    <path id="aiScoreCircle" class="circle" stroke-dasharray="82, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                    <text x="18" y="20.35" class="percentage" id="aiScoreVal">82</text>
-                  </svg>
-                </div>
-                <div class="ai-score-meta">
-                  <div class="ai-score-label">Health Score</div>
-                  <div class="ai-score-grade" id="aiScoreGrade">GOOD</div>
-                </div>
-              </div>
-              <div class="ai-metrics-list">
-                <div class="ai-metric-item">
-                  <span class="ai-metric-lbl">Top Spending</span>
-                  <span class="ai-metric-val" id="aiTopCategory">Utilities &amp; Bills</span>
-                </div>
-                <div class="ai-metric-item">
-                  <span class="ai-metric-lbl">Monthly Burn Rate</span>
-                  <span class="ai-metric-val" id="aiBurnRate">₹0.00</span>
-                </div>
-                <div class="ai-metric-item">
-                  <span class="ai-metric-lbl">Savings Ratio</span>
-                  <span class="ai-metric-val" id="aiSavingsRatio">--</span>
-                </div>
-              </div>
-            </div>
-            <div class="ai-bullets-box" id="aiBulletsList">
-              <div class="ai-bullet"><span class="ai-bullet-ic">✨</span><span>Loading AI portfolio intelligence...</span></div>
-            </div>
           </div>
 
           <div class="row-between" style="margin-bottom:12px">
@@ -661,6 +616,69 @@
           </div>
         </section>
 
+        <!-- ================= ANALYTICS ================= -->
+        <section class="view view-panel" data-view="analytics">
+          <div class="row-between">
+            <div>
+              <h1 class="section-title">Spending &amp; Analytics</h1>
+              <p class="section-sub">Portfolio health, category spending breakdowns, and AI cash flow intelligence.</p>
+            </div>
+            <button class="btn btn--ghost btn--sm" id="refreshAnalyticsBtn" title="Re-analyze with Gemini AI">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+              Refresh analytics
+            </button>
+          </div>
+
+          <!-- 4 KPI Stat Grid matching Dashboard -->
+          <div class="stat-grid" style="margin-top:16px;margin-bottom:24px">
+            <div class="stat-card">
+              <div class="stat-card__label">Financial Health</div>
+              <div class="stat-card__value" id="anScoreVal">80 <span style="font-size:14px;color:var(--credit);font-weight:700" id="anScoreGrade">GOOD</span></div>
+              <div class="stat-card__meta" id="anScoreMeta">Optimal buffer &amp; liquidity</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card__label">Monthly Outflow</div>
+              <div class="stat-card__value" id="anBurnRate"><span class="cur">₹</span>0.00</div>
+              <div class="stat-card__meta">Debit &amp; bill volume</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card__label">Monthly Inflow</div>
+              <div class="stat-card__value" id="anInflowRate"><span class="cur">₹</span>0.00</div>
+              <div class="stat-card__meta">Credits &amp; deposits</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card__label">Savings Retention</div>
+              <div class="stat-card__value" id="anSavingsRate">100%</div>
+              <div class="stat-card__meta">Net income saved</div>
+            </div>
+          </div>
+
+          <!-- 2-Column Institutional Analytics Grid -->
+          <div class="grid-2">
+            <div class="panel">
+              <div class="row-between" style="margin-bottom:12px">
+                <div class="panel__title">Spending by category</div>
+                <span class="status-pill status-pill--active" id="anTopCatPill">Top: Utilities</span>
+              </div>
+              <div class="panel__sub">Outgoing debit allocation across recent activity.</div>
+              <div class="category-breakdown" id="anCategoryList" style="display:flex;flex-direction:column;gap:14px;margin-top:16px">
+                <!-- Dynamically injected -->
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="row-between" style="margin-bottom:12px">
+                <div class="panel__title">AI Cash Flow Advisory</div>
+                <span class="trust-chip" style="font-size:10.5px">Gemini 3.6 Flash</span>
+              </div>
+              <div class="panel__sub">Institutional recommendations synthesized from your actual transaction ledger.</div>
+              <div id="anBulletsList" style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
+                <!-- Dynamically injected -->
+              </div>
+            </div>
+          </div>
+        </section>
+
       </main>
     </div>
   </div>
@@ -787,51 +805,6 @@
   </div>
 
   <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
-
-  <!-- Floating AI Copilot Trigger -->
-  <button class="ai-copilot-trigger" id="aiCopilotTrigger" aria-label="Open AI Financial Copilot" title="Ask CryptoBank Copilot">
-    <span class="ai-copilot-trigger__spark">✨</span>
-    <span class="ai-copilot-trigger__text">AI Copilot</span>
-    <span class="ai-copilot-trigger__badge">Gemini 3.6</span>
-  </button>
-
-  <!-- AI Copilot Chat Drawer / Window -->
-  <div class="ai-chat-drawer" id="aiChatDrawer" role="dialog" aria-modal="true" aria-label="AI Financial Copilot" hidden>
-    <div class="ai-chat-drawer__header">
-      <div class="ai-chat-drawer__brand">
-        <span class="ai-spark-icon">✨</span>
-        <div>
-          <div class="ai-chat-drawer__title">CryptoBank Copilot</div>
-          <div class="ai-chat-drawer__sub">Powered by Gemini 3.6 Flash · Grounded Financial Intelligence</div>
-        </div>
-      </div>
-      <button class="ai-chat-drawer__close" id="aiChatClose" aria-label="Close AI Chat">✕</button>
-    </div>
-
-    <div class="ai-chat-drawer__body" id="aiChatMessages">
-      <div class="ai-msg ai-msg--bot">
-        <div class="ai-msg__bubble">
-          <p>👋 Hello! I'm your <b>CryptoBank AI Copilot</b>, powered by Google Gemini 3.6 Flash.</p>
-          <p>I can analyze your spending, estimate if you can afford big purchases, or suggest personalized savings strategies grounded in your real banking ledger.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick suggestion chips -->
-    <div class="ai-chips-rail" id="aiChipsRail">
-      <button type="button" class="ai-chip" data-prompt="Analyze my recent spending habits">📊 Spending analysis</button>
-      <button type="button" class="ai-chip" data-prompt="Can I afford a ₹15,000 purchase right now?">💡 Affordability check</button>
-      <button type="button" class="ai-chip" data-prompt="How can I optimize my savings this month?">💰 Savings optimization</button>
-      <button type="button" class="ai-chip" data-prompt="What is my monthly burn rate?">🔥 Monthly burn rate</button>
-    </div>
-
-    <form class="ai-chat-drawer__footer" id="aiChatForm">
-      <input type="text" id="aiChatInput" class="ai-chat-input" placeholder="Ask financial question... (e.g. Can I afford ₹5,000 loan EMI?)" autocomplete="off" maxlength="500" required />
-      <button type="submit" class="btn btn--primary btn--sm" id="aiChatSendBtn" aria-label="Send">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-      </button>
-    </form>
-  </div>
 
   <script src="/js/app.js"></script>
 </body>
