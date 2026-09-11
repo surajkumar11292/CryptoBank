@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  cryptobank-db:
+    image: postgres:16-alpine
+    container_name: cryptobank-db
+    environment:
+      POSTGRES_DB: cryptobank
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  cryptobank-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cryptobank-app
+    depends_on:
+      cryptobank-db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://cryptobank-db:5432/cryptobank
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgrespassword
+      PORT: 8080
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdata:
