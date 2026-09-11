@@ -9,6 +9,7 @@
 
 [![Java](https://img.shields.io/badge/Java-21%20LTS-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.4-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Gemini](https://img.shields.io/badge/Google%20Gemini-3.6%20Flash-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 [![Spring Security](https://img.shields.io/badge/Spring%20Security-Sessions%20%2B%202FA-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white)](https://spring.io/projects/spring-security)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![H2 Database](https://img.shields.io/badge/H2-In--Memory%20Dev-1E88E5?style=for-the-badge&logo=h2&logoColor=white)](https://www.h2database.com/)
@@ -17,7 +18,7 @@
 
 <br/>
 
-**[✨ Key Features](#-features)** &nbsp;·&nbsp; **[🏗️ System Architecture](#-system-architecture)** &nbsp;·&nbsp; **[📂 Project Structure](#-project-structure)** &nbsp;·&nbsp; **[📡 REST API Reference](#-rest-api-reference)** &nbsp;·&nbsp; **[🚀 Quick Start](#-getting-started)** &nbsp;·&nbsp; **[🧪 Testing](#-testing)**
+**[✨ Key Features](#-features)** &nbsp;·&nbsp; **[🤖 AI Intelligence](#-gemini-ai-financial-intelligence)** &nbsp;·&nbsp; **[🏗️ Architecture](#-system-architecture)** &nbsp;·&nbsp; **[📂 Structure](#-project-structure)** &nbsp;·&nbsp; **[📡 API Reference](#-rest-api-reference)** &nbsp;·&nbsp; **[🚀 Quick Start](#-getting-started)**
 
 </div>
 
@@ -98,6 +99,53 @@
 - **Zero-Flash Theme Switcher**: Pre-paint theme application for Light, Dark, and System modes.
 - **Interactive OpenAPI 3.0 / Swagger UI** at `/swagger-ui.html`.
 - **Spring Boot Actuator** health monitoring at `/actuator/health`.
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🤖 Gemini AI Financial Intelligence & Copilot
+
+CryptoBank features an enterprise-grade artificial intelligence engine integrated natively with **Google Gemini 3.6 Flash**. Built with banking-grade data privacy and resilience, it elevates the platform into an intelligent financial partner:
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 💬 Conversational Financial Copilot
+- **Floating AI Copilot Window**: Accessible across all dashboard views with one click.
+- **Grounded Financial Context**: The model receives real-time transaction history, current balances, and burn rate to give factually accurate answers without hallucination.
+- **Affordability & Budget Checking**: Customers can simulate purchases (e.g., *"Can I afford a ₹15,000 expense?"*) and receive disposable income calculations.
+- **Quick-Prompt Chips**: Fast-action shortcuts for spending audits, savings tips, and burn rate analysis.
+
+</td>
+<td width="50%" valign="top">
+
+### 📊 Financial Health Score & Insights
+- **Dynamic 0–100 Health Score**: Evaluates liquidity ratio, savings velocity, and outflow stability (categorized as EXCELLENT, GOOD, FAIR, or NEEDS_ATTENTION).
+- **Automated Burn Rate Calculation**: Aggregates 30-day outflows vs. inflows with visual SVG gauge.
+- **Top Spending Categorization**: Automatically groups transactions into Utilities, Transfers, Savings, and Telecom.
+- **Actionable AI Recommendations**: Synthesizes 3 personalized, concise optimization strategies on every dashboard visit.
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+### 🚨 Real-Time Fraud & Anomaly Shield
+- **Pre-Transaction Risk Scoring**: Analyzes amount deviations against 30-day historical averages (flags > 3x average as anomaly).
+- **Beneficiary Novelty Check**: Evaluates if the destination account is a verified saved payee or unknown account.
+- **Dynamic Transfer Warning Banner**: Renders `LOW`, `MEDIUM`, or `HIGH` risk warnings before the customer enters their transaction PIN.
+
+</td>
+<td width="50%" valign="top">
+
+### 🛡️ Enterprise PII Masking & Resilience
+- **Strict PII Scrubbing (`PiiMasker`)**: In compliance with PCI-DSS & GDPR, customer account numbers (`****4921`) and names are cryptographically masked before prompt ingestion.
+- **Deterministic Offline Fallback**: If Gemini quotas, network drops, or rate limits occur, the system falls back to rule-based analytics with zero 500 errors or downtime.
+- **Admin Support Triage**: Auto-categorizes support tickets and generates AI draft responses for customer service agents in the Admin Console.
 
 </td>
 </tr>
@@ -285,6 +333,10 @@ All endpoints under `/api/**` (except registration, login, and public static ass
 | `POST` | `/api/admin/accounts/{number}/unfreeze` | Admin | Lift administrative fraud hold on an account |
 | `GET` | `/api/admin/tickets` | Admin | List all support tickets across the platform |
 | `POST` | `/api/admin/tickets/{id}/close` | Admin | Mark customer inquiry ticket as closed |
+| `POST` | `/api/ai/chat` | Customer | Conversational AI financial advisor grounded in user ledger |
+| `GET` | `/api/ai/insights` | Customer | Real-time financial health score and spending analysis |
+| `POST` | `/api/ai/assess-transfer-risk` | Customer | Pre-transaction transfer fraud & anomaly evaluation |
+| `POST` | `/api/ai/ticket-draft/{ticketId}` | Admin | Generate AI customer support resolution draft |
 
 📘 **Full interactive documentation, request/response schemas, and a test console are available at `/swagger-ui.html`.**
 
