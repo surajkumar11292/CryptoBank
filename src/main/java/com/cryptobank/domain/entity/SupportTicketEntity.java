@@ -30,4 +30,10 @@ public class SupportTicketEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private TicketStatus status = TicketStatus.OPEN;
+
+    @Column(length = 60)
+    private String aiCategory;
+
+    @Column(columnDefinition = "TEXT")
+    private String aiDraftReply;
 }

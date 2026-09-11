@@ -12,6 +12,8 @@ public record AdminTicketResponse(
         String subject,
         String message,
         String status,
+        String aiCategory,
+        String aiDraftReply,
         Instant createdAt
 ) {
     public static AdminTicketResponse from(SupportTicketEntity t) {
@@ -23,6 +25,8 @@ public record AdminTicketResponse(
                 t.getSubject(),
                 t.getMessage(),
                 t.getStatus().name(),
+                t.getAiCategory(),
+                t.getAiDraftReply(),
                 t.getCreatedAt()
         );
     }

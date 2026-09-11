@@ -31,7 +31,20 @@ public class SupportServiceImpl implements SupportService {
         t.setSubject(req.subject());
         t.setMessage(req.message());
         t.setStatus(TicketStatus.OPEN);
+        t.setAiCategory(categorizeTicket(req.subject(), req.message()));
+        t.setAiDraftReply("Dear " + owner.getFullName() + ",\n\nWe have received your inquiry regarding '"
+                + req.subject() + "'. Our support team has logged this under category [" + t.getAiCategory()
+                + "] and is actively reviewing your account details. Expected turnaround time is under 4 hours.\n\nBest regards,\nCryptoBank Operations");
         return SupportTicketResponse.from(tickets.save(t));
+    }
+
+    private String categorizeTicket(String subject, String message) {
+        String text = (subject + " " + message).toLowerCase();
+        if (text.contains("card") || text.contains("cvv") || text.contains("debit") || text.contains("atm")) return "CARD_SERVICES";
+        if (text.contains("transfer") || text.contains("money") || text.contains("sent") || text.contains("failed")) return "TRANSACTION_DISPUTE";
+        if (text.contains("pin") || text.contains("password") || text.contains("2fa") || text.contains("login") || text.contains("auth")) return "SECURITY_ACCESS";
+        if (text.contains("bill") || text.contains("recharge") || text.contains("utility")) return "BILL_PAYMENT";
+        return "ACCOUNT_SERVICES";
     }
 
     @Override
